@@ -1,4 +1,4 @@
-#include <iostream>
+﻿#include <iostream>
 #include <vector>
 #include <fstream>
 #include <unordered_map>
@@ -17,20 +17,17 @@ void Printedges(const vector <int> inDegree, int n) {
 
 bool hasRoot(int n, const vector<pair<int, int>>& edges, int& root) {
     vector<int> inDegree(n, 0);
-    vector<int> outDegree(n, 0);
     int count = 0; // Проверка, что корень 1 
     for (const auto& edge : edges) {
         int v = edge.second;
-        int i = edge.first;
         inDegree[v]++;
-        outDegree[i]++;
+
     }
 
     for (int i = 0; i < n; ++i) {
         if (inDegree[i] == 0) {
             count++;
-            if (outDegree[i]!=0)
-                root = i;
+            root = i;
             
         }
     }
@@ -130,8 +127,10 @@ int main() {
 
     int root = -1;
     req1 = hasRoot(n, edges, root);
-    req2 = checkInDegree(n, edges, root);
-    req3 = checkReachability(n, edges, root);
+    if (req1) {
+        req2 = checkInDegree(n, edges, root);
+        req3 = checkReachability(n, edges, root);
+    }
     if (req1 && req2 && req3){
         outFile << "Ордерево." << endl;
     }
