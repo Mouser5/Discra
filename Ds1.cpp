@@ -149,29 +149,65 @@ void load_key_from_file(const std::string& filename, cpp_int& key) {
     }
 }
 
+void read_from_file(const std::string filename, std::string& message) {
+    std::ifstream file(filename);
+    std::string str;
+    if (file.is_open()) {
+        while (!file.eof()) {
+            getline(file, str);
+            message += str+'\n';
+        }
+        
+    }
+}
+
 int main() {
     cpp_int n, e, d;
+    char y;
+    std::cout << "Do you want to generate keys? Y/n";
+    std::cin >> y;
+    if (tolower(y) == 'y') {
+        // Генерация ключей
+        generate_keys(n, e, d);
 
-    // Генерация ключей
-    generate_keys(n, e, d);
-    bool rd = is_prime(40193);
-
-    // Сохранение ключей в файлы
-    save_key_to_file("public_key.txt", e);
-    save_key_to_file("private_key.txt", d);
-    save_key_to_file("modulus.txt", n);
+        // Сохранение ключей в файлы
+        save_key_to_file("public_key.txt", e);
+        save_key_to_file("private_key.txt", d);
+        save_key_to_file("modulus.txt", n);
+    }
+    else {
+        std::ifstream file1("public_key.txt");
+        file1 >> e;
+        std::ifstream file1("private_key.txt");
+        file1 >> d;
+        std::ifstream file1("modulus.txt");
+        file1 >> n;
+    }
 
     // Пример сообщения для шифрования
-    std::string message = "123456789012345678901234567890";
+    std::string message;
+    read_from_file("input.txt",message);
     cpp_int plaintext(message);
-
-    // Шифрование
-    cpp_int encrypted_message = encrypt(plaintext, e, n);
-    std::cout << "Encrypted message: " << encrypted_message << std::endl;
-
-    // Расшифрование
-    cpp_int decrypted_message = decrypt(encrypted_message, d, n);
-    std::cout << "Decrypted message: " << decrypted_message << std::endl;
-
+    cpp_int encrypted_message;
+    std::cout << "Do you want to encrypt message? Y/n";
+    std::cin >> y;
+    if (tolower(y) == 'y') {
+        // Шифрование
+        encrypted_message = encrypt(plaintext, e, n);
+        std::ofstream file("encrypted_message.txt");
+        file << encrypted_message;
+    }
+    else {
+        std::ifstream file("encrypted_message.txt");
+        file >> encrypted_message;
+    }
+    std::cout << "Do you want to encrypt message? Y/n";
+    std::cin >> y;
+    if (tolower(y) == 'y') {
+        // Расшифрование
+        cpp_int decrypted_message = decrypt(encrypted_message, d, n);
+        std::ifstream file("decrypted_message.txt");
+        file >> decrypted_message;
+    }
     return 0;
 }
